@@ -10,7 +10,7 @@ import os
 #model and tokenizer loading
 checkpoint = "MBZUAI/LaMini-Flan-T5-248M"
 tokenizer = T5Tokenizer.from_pretrained(checkpoint)
-base_model = T5ForConditionalGeneration.from_pretrained(checkpoint, device_map='auto', torch_dtype=torch.float32)
+base_model = T5ForConditionalGeneration.from_pretrained(checkpoint, device_map='cpu', torch_dtype=torch.float32)
 
 #file loader and preprocessing
 def file_preprocessing(file):
