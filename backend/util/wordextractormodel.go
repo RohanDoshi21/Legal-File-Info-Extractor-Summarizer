@@ -40,6 +40,8 @@ func WordExtractor(path string, docId int, ownerID int) {
 func calculateMetaData(filePath string) []byte {
 
 	pythonMutex.Lock()
+	defer pythonMutex.Unlock()
+
 	fmt.Println("Python script started for file: ", filePath)
 
 	dirPath, _ := os.Getwd()
@@ -50,12 +52,6 @@ func calculateMetaData(filePath string) []byte {
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	if err != nil {
-		fmt.Println("Error decoding JSON:", err)
-	}
-
-	pythonMutex.Unlock()
 
 	return output
 }
