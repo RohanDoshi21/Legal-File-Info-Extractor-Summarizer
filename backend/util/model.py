@@ -37,12 +37,8 @@ def file_preprocessing(file_path):
 
 def get_file_metadata(file_path):
     generated_text = file_preprocessing(file_path)
-    file_size = os.path.getsize(file_path)
 
-    qna = {
-        "file_name": os.path.basename(file_path),
-        "file_size": file_size
-    }
+    qna = {}
 
     qna_text = ""
 

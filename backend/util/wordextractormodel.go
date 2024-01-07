@@ -2,10 +2,13 @@ package util
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"sync"
+	"time"
 
 	"github.com/volatiletech/null/v8"
 
@@ -54,4 +57,46 @@ func calculateMetaData(filePath string) []byte {
 	}
 
 	return output
+}
+
+func UpdateFileSummary(doc *M.Document, kvPairs map[string]string) {
+	pythonMutex.Lock()
+	defer pythonMutex.Unlock()
+
+	var filePath string
+
+	for k, v := range kvPairs {
+		filePath += "Q: " + k + " , A: " + v + " \n"
+	}
+
+	dirPath, _ := os.Getwd()
+	pythonScript := dirPath + "/util/updateKVModel.py"
+	cmd := exec.Command("python3", pythonScript, filePath)
+
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(string(output))
+
+	kvPairs["summary"] = string(output)
+	marshalContent, err := json.Marshal(kvPairs)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	updateBody := M.Document{
+		ID:        doc.ID,
+		Name:      doc.Name,
+		UpdatedAt: null.TimeFrom(time.Now()),
+		OwnerID:   doc.OwnerID,
+		Content:   null.JSONFrom(marshalContent),
+		Link:      doc.Link,
+	}
+
+	_, err = updateBody.Update(context.Background(), DB.PostgresConn, boil.Infer())
+	if err != nil {
+		panic(err)
+	}
 }

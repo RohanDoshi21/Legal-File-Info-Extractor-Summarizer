@@ -11,6 +11,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	M "github.com/word-extractor/word-extractor-apis/my_models"
 	T "github.com/word-extractor/word-extractor-apis/types"
+	U "github.com/word-extractor/word-extractor-apis/util"
 )
 
 type UserFilter struct {
@@ -148,6 +149,8 @@ func UpdateUserDoc(docBody *DocBody, trx *sql.Tx) (int, *T.ServiceError) {
 			Message: "Error while updating user docs",
 		}
 	}
+
+	go U.UpdateFileSummary(doc,docBody.FileContent)
 
 	return 0, nil
 }

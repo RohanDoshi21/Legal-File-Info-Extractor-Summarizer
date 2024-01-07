@@ -38,13 +38,11 @@ def llm_pipeline(filepath):
 
 def get_file_metadata(file_path):
     summary = llm_pipeline(file_path)
-    file_size = os.path.getsize(file_path)
 
     metadata = {
-        "file_name": os.path.basename(file_path),
-        "file_size": file_size,
         "summary": summary
     }
+
     return metadata
 
 if __name__ == "__main__":
